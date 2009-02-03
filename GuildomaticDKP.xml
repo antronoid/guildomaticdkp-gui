@@ -1,0 +1,15 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"   xsi:schemaLocation="http://www.blizzard.com/wow/ui/"> 
+    <Frame name="GmaticDKPFrame" frameStrata="LOW" enableMouse="false" movable="false" parent="UIParent" hidden="false">
+        <Scripts>
+            <OnLoad>
+                GmaticDKP_OnLoad();
+            </OnLoad>
+            <OnEvent>
+                GmaticDKP_OnEvent(event);
+            </OnEvent>
+            <OnUpdate>
+                GmaticDKP_OnUpdate(arg1);
+            </OnUpdate>
+        </Scripts>
+    </Frame>
+</Ui>

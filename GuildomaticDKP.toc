@@ -1,0 +1,11 @@
+## Interface: 30000
+## Title: Guildomatic DKP Manager v2.0.18
+## Version: 2.0.18
+## DefaultState: Enabled
+## Notes: Provides in-game tools for management of your guildomatic.com guild web site.
+## SavedVariables: UDKP_Auctions, UDKP_Queue, UDKP_Snapshots, UDKP_Config, UDKP_GuildRoster, UDKP_IgnoredLoot
+GuildomaticDKP.lua
+GuildomaticDKP_wnd.lua
+Guildomatic_static.lua
+GuildomaticDKP.xml
+
