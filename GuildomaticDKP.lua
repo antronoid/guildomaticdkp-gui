@@ -1,3 +1,22 @@
+--[[
+		Modifications added to addon
+		 - GUI for /snapshot list and note
+		 - record of items
+		 - report list o items on whisper
+		 
+		TODO:
+		 - add more flexibility with GUI
+		 - add loot synchronization between people in guild using this addon
+		 - and more :-)
+		 - improve auctions
+		 
+	Main modification was done by Tamaroth from Quel'Thalas, additional code was written by
+	lilsparky (listbox in gui) and core by Guildomatic
+	
+	07.03.2009, Tamaroth
+	
+]]--
+	
 local UDKP_Elapsed = 0;
 local UDKP_Classes = { "Death Knight", "Druid", "Hunter", "Mage", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior" };
 local UDKP_SnapshotColorMap = {
