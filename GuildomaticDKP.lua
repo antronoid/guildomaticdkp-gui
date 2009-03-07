@@ -29,6 +29,9 @@ local UDKP_DefaultLanguage = GetDefaultLanguage(player);
 
 local UDKP_ConvertToRaidOnJoin = false;
 
+local frm
+local editBox
+
 columnHeads = {
 	{
 			["name"] = "Snp",
@@ -55,7 +58,14 @@ columnHeads = {
 					GmaticDKP_Print("Usage: /snapshot remove <snapshot #>");
 				end
 			end,
-			["rightclick"] = function(button, dataz, colsz, rowz, realrowz, columnz )
+		}, -- [1]
+		{
+			["name"] = "lp",
+			["width"] = 30,
+			["align"] = "CENTER",
+			["bgcolor"] = { ["r"] = 0.2, ["g"] = 0.2, ["b"] = 0.2, ["a"] = 0.5 },
+			["tooltipText"] = "Number of Number of item in snapshot",
+			["dblclick"] = function(button, dataz, colsz, rowz, realrowz, columnz )
 				local snum = tonumber(dataz[realrowz].cols[1].value); -- snapshot number
 				local inum = tonumber(dataz[realrowz].cols[2].value); -- item number in snapshot
 				if (snum and inum) then
@@ -70,21 +80,13 @@ columnHeads = {
 						GmaticDKP_PrintError("Item " .. inum .. " not found in snapshot " .. snum .. ".");
 						return;
 					end
-					GmaticDKP_Print("Removed " .. item["item"] .. " from " .. item["item"] .. ".");
+					GmaticDKP_Print("Removed " .. item["item"] .. " from " .. item["player"] .. ".");
 					tremove(loot, inum);
 					
 					GmaticDKP_UpdateData();
 					return;
 				end
 				end,
-
-		}, -- [1]
-		{
-			["name"] = "lp",
-			["width"] = 30,
-			["align"] = "CENTER",
-			["bgcolor"] = { ["r"] = 0.2, ["g"] = 0.2, ["b"] = 0.2, ["a"] = 0.5 },
-			["tooltipText"] = "Number of Number of item in snapshot",
 		}, -- [1]
 		{
 			["name"] = "Event",
@@ -107,7 +109,7 @@ columnHeads = {
 		}, -- [3]
 		{
 			["name"] = "Player",
-			["width"] = 100,
+			["width"] = 150,
 			["align"] = "CENTER",
 			["color"] = { ["r"] = 1.0, ["g"] = 1.0, ["b"] = 0.0, ["a"] = 1.0 },
 			["bgcolor"] = { ["r"] = 0.2, ["g"] = 0.2, ["b"] = 0.2, ["a"] = 0.5 },
@@ -120,29 +122,33 @@ columnHeads = {
 			["color"] = { ["r"] = 1.0, ["g"] = 0.0, ["b"] = 1.0, ["a"] = 1.0 },
 			["bgcolor"] = { ["r"] = 0.2, ["g"] = 0.2, ["b"] = 0.2, ["a"] = 0.5 },
 			["tooltipText"] = "double click item to edit",
-			["dblclick"] = function(button, dataz, colsz, rowz, realrowz, columnz )
-				local frm = CreateFrame("Frame","myFrame", UDKP_Frame)
-				frm:SetHeight(40)
-				frm:SetWidth(100)
-				frm:SetPoint("CENTER", UDKP_Frame, "CENTER", 0, 0)
-				frm:SetBackdrop({bgFile = "Interface/DialogFrame/UI-DialogBox-Background",
-					edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
-					tile = true, tileSize = 16, edgeSize = 16,
-					insets = { left = 5, right = 5, top = 5, bottom = 5 }})
-				frm:SetBackdropColor(.75, .75, .75)
-				local editBox = CreateFrame("EditBox", "myEdit", frm, "InputBoxTemplate")
-				editBox:SetWidth(50)
-				editBox:SetHeight(20)
-				editBox:SetPoint("TOPLEFT", frm, "TOPLEFT", 15, -10)
-				editBox:SetAutoFocus(false)
+			["dblclick"] = function(button, data, cols, row, realrow, column )
+				if not frm then
+					frm = CreateResizableWindow("GDKP_AddDKP", "Add DKP", 180, 80, nil)
+					frm:SetPoint("CENTER", UDKP_Frame, "CENTER", 0, 0)
+					frm:SetBackdrop({bgFile = "Interface/DialogFrame/UI-DialogBox-Background",
+						edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
+						tile = true, tileSize = 16, edgeSize = 16,
+						insets = { left = 5, right = 5, top = 5, bottom = 5 }})
+					frm:SetBackdropColor(.75, .75, .75)
+					editBox = CreateFrame("EditBox", "myEdit", frm, "InputBoxTemplate")
+					editBox:SetWidth(80)
+					editBox:SetHeight(20)
+					editBox:SetPoint("TOPLEFT", frm, "TOPLEFT", 35, -30)
+					editBox:SetAutoFocus(true)
+
+					local editBoxLabel = editBox:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+					editBoxLabel:SetPoint("RIGHT", 25, 0)
+					editBoxLabel:SetText("DKP")
+				end
 				editBox:SetScript("OnEnterPressed", function()
 						local noted = editBox:GetText()
 						frm:Hide();
 						if(noted == "") then
 							return;
 						end
-						local snum = tonumber(dataz[realrowz].cols[1].value);
-						local inum = tonumber(dataz[realrowz].cols[2].value);
+						local snum = tonumber(data[realrow].cols[1].value);
+						local inum = tonumber(data[realrow].cols[2].value);
 						if (snum and inum) then
 							local snapshot = UDKP_Snapshots[snum];
 							if (not snapshot) then
@@ -158,15 +164,11 @@ columnHeads = {
 							end
 
 							item["note"] = noted;
-							GmaticDKP_Print("Recorded " .. noted .. " for " .. item["item"] .. ".");
+							GmaticDKP_Print("Recorded " .. noted .. " for " .. item["item"] .. " to " .. data[realrow].cols[5].value);
 							GmaticDKP_UpdateData();
 							return;
 						end
 						end)
-
-				local editBoxLabel = editBox:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-				editBoxLabel:SetPoint("RIGHT", 25, 0)
-				editBoxLabel:SetText("DKP")
 				frm:Show();
 				end,
 		} -- [5]
@@ -1577,12 +1579,12 @@ function GmaticDKP_OnLoad()
     this:RegisterEvent("ADDON_LOADED");
     this:RegisterEvent("PLAYER_ENTERING_WORLD");
     
-UDKP_frame = CreateResizableWindow("GmaticDKPGUI", "GuildomaticDKP GUI", 500, 100, OnResize)
+UDKP_frame = CreateResizableWindow("GmaticDKPGUI", "GuildomaticDKP GUI", 500, 200, OnResize)
 UDKP_frame:SetMinResize(530,200)
 UDKP_frame:SetUserPlaced(true)
 
 if not UDKP_st then
-	UDKP_st = ScrollingTable:CreateST(columnHeads,10,nil,nil,UDKP_frame);
+	UDKP_st = ScrollingTable:CreateST(columnHeads,80,nil,nil,UDKP_frame);
 	UDKP_st.b_frame:SetPoint("BOTTOMLEFT",8,8)
 	UDKP_st.b_frame:SetPoint("TOP", UDKP_frame, 0, -60)
 	UDKP_st.b_frame:SetPoint("RIGHT", UDKP_frame, -8,0)

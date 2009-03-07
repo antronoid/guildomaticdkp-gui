@@ -610,6 +610,9 @@ function OnResize()
 		columnHeads[5].width =  UDKP_frame:GetWidth() - 460
 
 		local rows = floor((UDKP_frame:GetHeight()-60-15) / 15)
+		if rows > 80 then
+			return
+		end
 
 
 		if rows >= #UDKP_st.filtered then
@@ -625,6 +628,10 @@ function OnResize()
 	end
 end
 
+function WndOnResize()
+	return
+end
+
 function CreateResizableWindow(frameName,windowTitle, width, height, resizeFunction)
 	local s_frame = CreateFrame("Frame",frameName,UIParent)
 	s_frame:Hide()
@@ -637,16 +644,18 @@ function CreateResizableWindow(frameName,windowTitle, width, height, resizeFunct
 				edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
 				tile = true, tileSize = 32, edgeSize = 32,
 				insets = { left = 8, right = 8, top = 8, bottom = 8 }})
-
-	s_frame:SetResizable(true)
+	if resizeFunction then
+		s_frame:SetResizable(true)
+		s_frame:SetScript("OnSizeChanged", function() resizeFunction() end)
+		s_frame:SetScript("OnMouseDown", function() s_frame:StartSizing(GetSizingPoint(s_frame)) end)
+	end
+	
 	s_frame:SetMovable(true)
 	s_frame:SetPoint("CENTER",0,0)
 
-	s_frame:SetScript("OnSizeChanged", function() resizeFunction() end)
-
 	s_frame:EnableMouse(true)
 
-	s_frame:SetScript("OnMouseDown", function() s_frame:StartSizing(GetSizingPoint(s_frame)) end)
+	
 	s_frame:SetScript("OnMouseUp", s_frame.StopMovingOrSizing)
 	s_frame:SetScript("OnHide", s_frame.StopMovingOrSizing)
 
