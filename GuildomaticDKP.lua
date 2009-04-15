@@ -122,7 +122,7 @@ columnHeads = {
 			["align"] = "CENTER",
 			["bgcolor"] = { ["r"] = 0.2, ["g"] = 0.2, ["b"] = 0.2, ["a"] = 0.5 },
 			["tooltipText"] = "Acquired item",
-			["onhover"] =	function(button, link)
+			["click"] =	function(button, link)
 				SetItemRef(link)
 				end,
 		}, -- [3]
@@ -1619,6 +1619,16 @@ if not UDKP_st then
 						cols[column].dblclick(button, data, cols, row, realrow, column )
 					end
 				end
+			end, 
+		["OnClick"] = function (rowFrame, cellFrame, data, cols, row, realrow, column, button, ...) -- what to do on click
+			local cellData = data[realrow].cols[column]
+			if cellData.click then
+				cellData.click(button, unpack(cellData.onhoverargs or {}))
+			else
+				if cols[column].click then
+					cols[column].click(button, unpack(cellData.onhoverargs or cols[column].onhoverargs or {}))
+				end
+			end
 			end, 
 			-- when hover over the cell, execute 'onhover' funtion from table and on hover out execute it once more, used to display
 			-- tooltips of an item when hovered over the tab
