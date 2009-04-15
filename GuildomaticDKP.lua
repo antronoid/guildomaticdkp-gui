@@ -1318,14 +1318,14 @@ function GmaticDKP_OnEvent(event)
     end
 end
 
-function GmaticDKP_OnWhisperInform (msg)
+function GmaticDKP_OnWhisperInform (self, event, msg)
     local iStart, _ = string.find(msg, "^Guildomatic:");
     if (iStart) then
         return true;
     end
 end
 
-function GmaticDKP_OnWhisper (msg)
+function GmaticDKP_OnWhisper (self, event, msg)
     local commands = {};
 
     string.gsub(msg, "%S+",
@@ -1410,7 +1410,7 @@ function GmaticDKP_OnWhisper (msg)
     end
 end
 
-function GmaticDKP_OnChannelJoin (msg)
+function GmaticDKP_OnChannelJoin (self, event, msg)
     if (UDKP_Config["QueueChannel"] == nil) then
 	UDKP_Config["QueueChannel"] = ""
     end
@@ -1507,7 +1507,7 @@ function GmaticDKP_AddLoot(itemid, playern, UDKP_Note)
 	GmaticDKP_UpdateData();
 end
 
-function GmaticDKP_RecordLoot(msg)
+function GmaticDKP_RecordLoot(self, event, msg)
     local iStart, _, sPlayer, sItem = string.find(msg, "([^%s]+) receive[s]? loot: (.+)%.");
     if (iStart) then
         local _, _, sColor = string.find(sItem, "|c(%x+)|Hitem:")
